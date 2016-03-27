@@ -13,7 +13,8 @@ client = Client(appid='wxfd7414fc987df416', appsecret='a7e2632b2dc9f5496520c2fc2
 
 #client.sendTextMsg('xxxxxxx', 'Hello world')
 
-client.do_push("","https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=ACCESS_TOKEN")
+
+client.do_push("hello every one;this is only a test")
 
 #demo  推送图片信息,其中sendto为关注该帐号的某用户的fakeId，img为图片的文件路径
 

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
 
 __author__ = 'Vincent Ting'
 
@@ -11,6 +10,7 @@ import poster
 import hashlib
 import time
 import re
+import datetime
 
 
 class BaseClient(object):
@@ -71,32 +71,37 @@ class BaseClient(object):
 
     def post_data(self, url, para_dct):
         """触发post请求微信发送最终的模板消息"""
+
+        # req = urllib2.Request(url)
+        # data = urllib.urlencode(para_dct)
+        # #enable cookie
+        # opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+        # response = opener.open(req, data)
+        # return response.read()
+
         para_data = para_dct
-        f = urllib2.urlopen(url, para_data)
+        f = urllib2.urlopen(url,para_data)
         content = f.read()
         return content
 
-    def do_push(self,touser,template_id,url,topcolor,data):
+    def do_push(self, content):
         '''推送消息 '''
         #获取存入到过期文件中的token,同时判断是否过期
         token,if_token_expires=self.check_token_expires()
         #如果过期了就重新获取token
         if if_token_expires=="false":
           token=self.getToken()
-        # 背景色设置,貌似不生效
-        if topcolor.strip()=='':
-          topcolor = "#7B68EE"
         #最红post的求情数据
-        dict_arr = {'touser': touser, 'template_id':template_id, 'url':url, 'topcolor':topcolor,'data':data}
+        dict_arr = {'filter': {'is_to_all' : True}, 'text':{'content': content},'msgtype':'text'}
         json_template = json.dumps(dict_arr)
-        requst_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+token
+        requst_url = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token="+token
         content = self.post_data(requst_url,json_template)
         #读取json数据
         j = json.loads(content)
         j.keys()
         errcode = j['errcode']
         errmsg = j['errmsg']
-        #print errmsg
+        print errmsg
 
     # def __init__(self, appid=None, appsecret=None, finename='/tmp/weixin.krb'):
     #     """
